@@ -6,6 +6,8 @@ import tornado.ioloop
 import tornado.web
 import torndb
 
+from ConfigParser import SafeConfigParser
+
 ####
 
 
@@ -159,12 +161,16 @@ class LogoutHandler(ProtoHandler):
 
 
 if __name__ == "__main__":
-    db = torndb.Connection('localhost',
-                           'grprakticni',
-                           'grprakticni', '')
 
-    # studenti
-    csvfile = codecs.open("data/k1.csv", 'r')
+    conf = SafeConfigParser()
+    conf.read("./vars.ini")
+
+    db = torndb.Connection(conf.get("db_data", "db_host"),
+                           conf.get("db_data", "db_name"),
+                           conf.get("db_data", "db_username"),
+                           conf.get("db_data", "db_pass"))
+
+    csvfile = codecs.open(conf.get("csv", "userinfo"), 'r')
     data = csv.reader(csvfile, delimiter=',')
 
     S = dict()
@@ -172,8 +178,7 @@ if __name__ == "__main__":
         S[row[0]] = {'pass': row[1]}
     csvfile.close()
 
-    # moguci termini
-    csvfile = codecs.open("data/datumi.csv", 'r')
+    csvfile = codecs.open(conf.get("csv", "agenda"), 'r')
     data = csv.reader(csvfile, delimiter=',')
 
     D = dict()
@@ -184,7 +189,7 @@ if __name__ == "__main__":
 
     # tornado stuff
     settings = dict(debug=True,
-                    cookie_secret="123asdffff",
+                    cookie_secret=conf.get("web", "cookie_secret"),
                     login_url="/login",
                     static_path="./html/bootstrap")
 
