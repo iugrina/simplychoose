@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="hr">
+<head>
+  <meta charset="UTF-8" />
+  <title>Raspored</title>
+   <link href="/static/css/bootstrap.min.css" rel="stylesheet" media="screen">
+</head>
+<body>
+<div class="container-fluid">
+<div class="row-fluid">
+	<div class="span3 bs-docs-sidebar">
+		<br>
+        <ul class="nav nav-list bs-docs-sidenav">
+		<li> <a href="/"><i class="icon-chevron-right"></i>Raspored</a>  </li>
+		<li> <a href="./change"><i class="icon-chevron-right"></i>Odaberi termin</a> </li>
+		{% if logged_in %}
+		<li> <a href="/logout"><i class="icon-chevron-right"></i>Logout ({{Ime}} {{Prezime}})</a> </li>
+		{% end %}
+		</ul>
+	</div>
+
+	<div class="span5">
+	<br>
+
+	<div class="alert">
+	  Pričekajte da dođete na red!
+	</div>
+
+	</div>
+</div>
+</div>
+</body>
+</html>        
