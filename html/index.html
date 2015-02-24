@@ -14,7 +14,7 @@
 		<li> <a href="/"><i class="icon-chevron-right"></i>Raspored</a>  </li>
 		<li> <a href="./change"><i class="icon-chevron-right"></i>Odaberi termin</a> </li>
 		{% if logged_in %}
-		<li> <a href="/logout"><i class="icon-chevron-right"></i>Logout ({{Ime}} {{Prezime}})</a> </li>
+		<li> <a href="/logout"><i class="icon-chevron-right"></i>Logout ({{username}})</a> </li>
 		{% end %}
 		</ul>
 	</div>
@@ -25,16 +25,14 @@
 		<thead>
 		<tr>
 			<td><strong>Termin</strong></td>
-			<td><strong>Ime</strong></td>
-			<td><strong>Prezime</strong></td>
+			<td><strong>Username</strong></td>
 		</tr>
 		</thead>
 		<tbody>
 		{% for r in raspored %}
 		<tr>
 			<td>{{ r['termin'] }}</td>
-			<td>{{ r['ime'] }}</td>
-			<td>{{ r['prezime'] }}</td>
+			<td>{{ r['username'] }}</td>
 		</tr>
 		{% end %}
 		</tbody>

@@ -4,7 +4,7 @@ import pprint
 
 import tornado.ioloop
 import tornado.web
-import tornado.database
+import torndb
 
 ####
 
@@ -51,16 +51,14 @@ class RasporedHandler(ProtoHandler):
         R = list()
         for r in raspored:
             if r.opcija != 0:
-                R.append({'ime': self.S[str(r.jmbag)]["ime"],
-                          'prezime': self.S[str(r.jmbag)]["prezime"],
+                R.append({'username': str(r.username),
                           'termin': self.D[str(r.opcija)]["termin"]})
 
         R = sorted(R, key=lambda x: x['termin'])
 
         if self.current_user:
             self.render("html/index.html", raspored=R, logged_in=True,
-                        Ime=self.S[self.current_user]["ime"],
-                        Prezime=self.S[self.current_user]["prezime"])
+                        username=self.current_user)
         else:
             self.render("html/index.html", raspored=R, logged_in=False)
 
@@ -77,10 +75,10 @@ class IzaberiRasporedHandler(ProtoHandler):
 
         opcije = sorted(opcije, key=lambda x: x['termin'])
 
-        jmbag = self.get_secure_cookie("id")
+        username = self.get_secure_cookie("id")
 
         try:
-            r = db.query("select * from raspored where jmbag='%s'" % (jmbag,))
+            r = db.query("select * from raspored where username='%s'" % (username,))
         except Exception as e:
             print e
             self.write("pogreska --06")
@@ -95,8 +93,7 @@ class IzaberiRasporedHandler(ProtoHandler):
 
         self.render("html/izaberi.html", opcije=opcije, moj_termin=moj_termin,
                     logged_in=True,
-                    Ime=self.S[self.current_user]["ime"],
-                    Prezime=self.S[self.current_user]["prezime"])
+                    username=self.current_user)
 
     @tornado.web.authenticated
     def post(self):
@@ -114,15 +111,12 @@ class IzaberiRasporedHandler(ProtoHandler):
                         self.write("pogresan unos --08")
                         return
 
-                jmbag = self.get_secure_cookie("id")
-                r = db.query("select * from raspored where"
-                             "jmbag='%s'" % (jmbag,))
+                username = self.get_secure_cookie("id")
+                r = db.query("select * from raspored where username='%s'" % (username,))
                 if r != []:
-                    db.execute("update raspored set opcija='%s'"
-                               "where jmbag='%s'" % (opcija, jmbag))
+                    db.execute("update raspored set opcija='%s' where username='%s'" % (opcija, username))
                 else:
-                    db.execute("insert into raspored values"
-                               "('%s', '%s')" % (jmbag, opcija))
+                    db.execute("insert into raspored values ('%s', '%s')" % (username, opcija))
 
                 self.redirect("/change")
             else:
@@ -142,13 +136,13 @@ class LoginHandler(ProtoHandler):
     def post(self):
         "Request user profile authorization"
         try:
-            if self.get_argument("jmbag") and self.get_argument("b"):
-                jmbag = str(self.get_argument("jmbag"))
-                b = str(self.get_argument("b"))
+            if self.get_argument("username") and self.get_argument("pass"):
+                username = str(self.get_argument("username"))
+                b = str(self.get_argument("pass"))
 
-                if self.S.get(jmbag) is not None:
-                    if b == self.S[jmbag]["b"]:
-                        self.set_secure_cookie("id", jmbag)
+                if self.S.get(username) is not None:
+                    if b == self.S[username]["pass"]:
+                        self.set_secure_cookie("id", username)
                     else:
                         self.write("pogresan unos --10")
                 else:
@@ -165,9 +159,9 @@ class LogoutHandler(ProtoHandler):
 
 
 if __name__ == "__main__":
-    db = tornado.database.Connection('localhost',
-                                     'grprakticni',
-                                     'grprakticni', '')
+    db = torndb.Connection('localhost',
+                           'grprakticni',
+                           'grprakticni', '')
 
     # studenti
     csvfile = codecs.open("data/k1.csv", 'r')
@@ -175,9 +169,7 @@ if __name__ == "__main__":
 
     S = dict()
     for row in data:
-        S[row[0]] = {'ime': row[1],
-                     'prezime': row[2],
-                     'b': row[3]}
+        S[row[0]] = {'pass': row[1]}
     csvfile.close()
 
     # moguci termini

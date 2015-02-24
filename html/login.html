@@ -14,7 +14,7 @@
 		<li> <a href="/"><i class="icon-chevron-right"></i>Raspored</a>  </li>
 		<li> <a href="./change"><i class="icon-chevron-right"></i>Odaberi termin</a> </li>
 		{% if logged_in %}
-		<li> <a href="/logout"><i class="icon-chevron-right"></i>Logout ({{Ime}} {{Prezime}})</a> </li>
+		<li> <a href="/logout"><i class="icon-chevron-right"></i>Logout ({{username}})</a> </li>
 		{% end %}
 		</ul>
 	</div>
@@ -26,13 +26,13 @@
   <div class="control-group">
     <label class="control-label" for="inputJMBAG">JMBAG</label>
     <div class="controls">
-	  <input type="text" name="jmbag"> 
+	  <input type="text" name="username"> 
     </div>
   </div>
   <div class="control-group">
     <label class="control-label" for="inputBODOVI">Broj bodova na prvom kolokviju</label>
     <div class="controls">
-	  <input type="text" name="b"> 
+	  <input type="text" name="pass"> 
     </div>
   </div>
   <input type="submit" class="btn btn-primary"  value="Pošalji">

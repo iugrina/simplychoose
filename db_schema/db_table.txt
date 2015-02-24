@@ -1,6 +1,6 @@
 DROP TABLE IF EXISTS `raspored`;
 CREATE TABLE `raspored` (
   `username` varchar(20) NOT NULL,
-  `option` int NOT NULL,
+  `opcija` int NOT NULL,
   PRIMARY KEY (`username`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
