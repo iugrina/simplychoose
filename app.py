@@ -69,13 +69,6 @@ class RasporedHandler(ProtoHandler):
 class IzaberiRasporedHandler(ProtoHandler):
     @tornado.web.authenticated
     def get(self):
-
-        if float(self.S[str(self.current_user)]["b"]) < 10 :
-            self.render("html/pricekajte.html", logged_in=True,
-                Ime=self.S[self.current_user]["ime"],
-                Prezime=self.S[self.current_user]["prezime"])
-            return
-
         S = broj_slobodnih_mjesta(self.db, self.D)
 
         opcije = list()
@@ -108,13 +101,6 @@ class IzaberiRasporedHandler(ProtoHandler):
 
     @tornado.web.authenticated
     def post(self):
-        if float(self.S[str(self.current_user)]["b"]) <0 :
-            self.render("html/pricekajte.html",
-                Ime=self.S[self.current_user]["ime"],
-                Prezime=self.S[self.current_user]["prezime"],
-				logged_in=True)
-            return
-
         S = broj_slobodnih_mjesta(self.db, self.D)
 
         try:
