@@ -16,14 +16,15 @@ def broj_slobodnih_mjesta(db, D):
 
     try:
         # povuci iz baze broj studenata po terminu
-        count = db.query("select opcija, count(opcija) as 'broj' from raspored group by opcija;")
+        count = db.query("select opcija, count(opcija) as 'broj'"
+                         "from raspored group by opcija;")
         for r in count:
-            C[ str(r['opcija']) ] = r['broj']
+            C[str(r['opcija'])] = r['broj']
     except Exception as e:
         print e
 
     S = dict()
-    for k,v in D.items() :
+    for k, v in D.items():
         S[k] = int(v['mjesta']) - int(C[k])
 
     return S
@@ -48,22 +49,20 @@ class RasporedHandler(ProtoHandler):
             self.write("pogreska --07")
 
         R = list()
-        for r in raspored :
-            if r.opcija != 0 :
-                R.append( {'ime':self.S[str(r.jmbag)]["ime"],
-                    'prezime':self.S[str(r.jmbag)]["prezime"],
-                    'termin': self.D[str(r.opcija)]["termin"]
-                } )
+        for r in raspored:
+            if r.opcija != 0:
+                R.append({'ime': self.S[str(r.jmbag)]["ime"],
+                          'prezime': self.S[str(r.jmbag)]["prezime"],
+                          'termin': self.D[str(r.opcija)]["termin"]})
 
         R = sorted(R, key=lambda x: x['termin'])
 
-        if self.current_user :
+        if self.current_user:
             self.render("html/index.html", raspored=R, logged_in=True,
-                Ime=self.S[self.current_user]["ime"],
-                Prezime=self.S[self.current_user]["prezime"])
+                        Ime=self.S[self.current_user]["ime"],
+                        Prezime=self.S[self.current_user]["prezime"])
         else:
             self.render("html/index.html", raspored=R, logged_in=False)
-
 
 
 class IzaberiRasporedHandler(ProtoHandler):
@@ -72,9 +71,9 @@ class IzaberiRasporedHandler(ProtoHandler):
         S = broj_slobodnih_mjesta(self.db, self.D)
 
         opcije = list()
-        for k,v in self.D.items() :
-            if S[k] > 0 :
-                opcije.append( { 'opcija': k, 'termin': self.D[k]["termin"] })
+        for k, v in self.D.items():
+            if S[k] > 0:
+                opcije.append({'opcija': k, 'termin': self.D[k]["termin"]})
 
         opcije = sorted(opcije, key=lambda x: x['termin'])
 
@@ -86,18 +85,18 @@ class IzaberiRasporedHandler(ProtoHandler):
             print e
             self.write("pogreska --06")
 
-        if r != [] :
+        if r != []:
             if int(r[0].opcija) > 0:
                 moj_termin = self.D[str(r[0].opcija)]["termin"]
             else:
                 moj_termin = ""
-        else :
+        else:
             moj_termin = ""
 
         self.render("html/izaberi.html", opcije=opcije, moj_termin=moj_termin,
-            logged_in=True,
-            Ime=self.S[self.current_user]["ime"],
-            Prezime=self.S[self.current_user]["prezime"])
+                    logged_in=True,
+                    Ime=self.S[self.current_user]["ime"],
+                    Prezime=self.S[self.current_user]["prezime"])
 
     @tornado.web.authenticated
     def post(self):
@@ -110,17 +109,20 @@ class IzaberiRasporedHandler(ProtoHandler):
                 S = broj_slobodnih_mjesta(self.db, self.D)
                 pprint.pprint(S)
 
-                if int(opcija) > 0 :
-                    if S[opcija] < 1 :
+                if int(opcija) > 0:
+                    if S[opcija] < 1:
                         self.write("pogresan unos --08")
                         return
 
                 jmbag = self.get_secure_cookie("id")
-                r = db.query("select * from raspored where jmbag='%s'" % (jmbag,))
-                if r != [] :
-                    db.execute("update raspored set opcija='%s' where jmbag='%s'" % (opcija, jmbag))
+                r = db.query("select * from raspored where"
+                             "jmbag='%s'" % (jmbag,))
+                if r != []:
+                    db.execute("update raspored set opcija='%s'"
+                               "where jmbag='%s'" % (opcija, jmbag))
                 else:
-                    db.execute("insert into raspored values ('%s', '%s')" % (jmbag, opcija))
+                    db.execute("insert into raspored values"
+                               "('%s', '%s')" % (jmbag, opcija))
 
                 self.redirect("/change")
             else:
@@ -132,7 +134,7 @@ class IzaberiRasporedHandler(ProtoHandler):
 
 class LoginHandler(ProtoHandler):
     def get(self):
-        if self.get_secure_cookie("id") :
+        if self.get_secure_cookie("id"):
             self.redirect("/change")
 
         self.render("html/login.html", logged_in=False)
@@ -140,11 +142,11 @@ class LoginHandler(ProtoHandler):
     def post(self):
         "Request user profile authorization"
         try:
-            if self.get_argument("jmbag") and self.get_argument("b") :
+            if self.get_argument("jmbag") and self.get_argument("b"):
                 jmbag = str(self.get_argument("jmbag"))
                 b = str(self.get_argument("b"))
 
-                if self.S.get(jmbag) != None :
+                if self.S.get(jmbag) is not None:
                     if b == self.S[jmbag]["b"]:
                         self.set_secure_cookie("id", jmbag)
                     else:
@@ -163,8 +165,9 @@ class LogoutHandler(ProtoHandler):
 
 
 if __name__ == "__main__":
-    db = tornado.database.Connection( 'localhost',
-        'grprakticni', 'grprakticni', '')
+    db = tornado.database.Connection('localhost',
+                                     'grprakticni',
+                                     'grprakticni', '')
 
     # studenti
     csvfile = codecs.open("data/k1.csv", 'r')
@@ -172,7 +175,9 @@ if __name__ == "__main__":
 
     S = dict()
     for row in data:
-        S[row[0]] = {'ime':row[1], 'prezime':row[2], 'b':row[3]}
+        S[row[0]] = {'ime': row[1],
+                     'prezime': row[2],
+                     'b': row[3]}
     csvfile.close()
 
     # moguci termini
@@ -181,26 +186,23 @@ if __name__ == "__main__":
 
     D = dict()
     for row in data:
-        D[row[0]] = {'mjesta':row[1], 'termin':row[2]}
+        D[row[0]] = {'mjesta': row[1],
+                     'termin': row[2]}
     csvfile.close()
 
     # tornado stuff
-    settings = dict(
-      debug=True,
-      cookie_secret="123asdffff",
-      login_url="/login",
-      static_path="./html/bootstrap",
-    )
+    settings = dict(debug=True,
+                    cookie_secret="123asdffff",
+                    login_url="/login",
+                    static_path="./html/bootstrap")
 
     application = tornado.web.Application([
         (r"/", RasporedHandler, dict(db=db, S=S, D=D)),
         (r"/login", LoginHandler, dict(db=db, S=S, D=D)),
         (r"/logout", LogoutHandler, dict(db=db, S=S, D=D)),
         (r"/change", IzaberiRasporedHandler, dict(db=db, S=S, D=D)),
-        ], **settings
-    )
+        ], **settings)
 
     application.listen(8880)
     ioloop = tornado.ioloop.IOLoop().instance()
     ioloop.start()
-
