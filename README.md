@@ -40,7 +40,18 @@ $ mysql -uusername -p < db_schema/db_table.txt
 
 Copy csv files to data directory. One for username/pass combination
 and one for questions/dates/... Take a look at `data/datumi.csv`
-and `data/k1.csv` for an example.
+and `data/k1.csv` for an example. Structure of csv files should
+be as follows:
+- username/pass csv:
+  - first column should contain usernames
+  - second column should contain passwords
+  - first row should be the header containing appropriate names
+- dates/questions/... csv:
+  - first column should be a unique identifier for questions/dates/...
+  - second column should contain max number of people able to apply for this
+    option
+  - third columns should contain questions/dates/...
+  - there should be no header row
 
 Final step is to properly adjust variables in *vars.ini* file and
 run the application with
