@@ -6,7 +6,7 @@ It is written in Python2 using
 with the help of good old [Bootstrap](http://getbootstrap.com/).
 
 
-### Use case scenario
+## Use case scenario
 
 If you're asking yourself why yet another I (we) had a use case
 scenario like this: there was a need to allow students to choose
@@ -16,13 +16,13 @@ just be to copy these csv files to an app and simply run it.
 Voilà, using students can log in (info in a csv) and choose
 a date (info in another csv).
 
-### Requirements
+## Requirements
 
 - MySQL-python>=1.2.5
 - tornado>=4.0.2
 - torndb>=0.3
 
-### Install/Run
+## Install/Run
 
 A database in MySQL is need together with a *username* and a *pass*.
 If you don't have it already you can create it as follows:
@@ -44,7 +44,7 @@ run the application with
 $ python app.py
 ```
 
-#### Running through VirtualENV
+### Running through VirtualENV
 
 The app can also be run through a tool to create isolated Python
 environment called [virtualenv](https://virtualenv.pypa.io/en/latest/).
@@ -66,6 +66,6 @@ $ pip install -r requirements.txt
 You can now adjust everything like in the previous section
 and run the application.
 
-### Imporant
+## Imporant
 
 Don't forget to open the port for the application in your firewall.
