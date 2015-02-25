@@ -38,6 +38,10 @@ Appropriate database structure can be achieved now as follows:
 $ mysql -uusername -p < db_schema/db_table.txt
 ```
 
+Copy csv files to data directory. One for username/pass combination
+and one for questions/dates/... Take a look at `data/datumi.csv`
+and `data/k1.csv` for an example.
+
 Final step is to properly adjust variables in *vars.ini* file and
 run the application with
 ```bash
