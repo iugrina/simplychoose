@@ -200,6 +200,6 @@ if __name__ == "__main__":
         (r"/change", IzaberiRasporedHandler, dict(db=db, S=S, D=D)),
         ], **settings)
 
-    application.listen(8880)
+    application.listen(conf.get("web","port"))
     ioloop = tornado.ioloop.IOLoop().instance()
     ioloop.start()
