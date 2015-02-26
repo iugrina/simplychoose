@@ -35,7 +35,7 @@ where *db_host* is the name of the machine running MySQL server (usually
 
 Appropriate database structure can be achieved now as follows:
 ```bash
-$ mysql -uusername -p < db_schema/db_table.txt
+$ mysql -Ddb_name -uusername -p < db_schema/db_table.txt
 ```
 
 Copy csv files to the data directory. One for username/pass combination
